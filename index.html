@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="CloudPulse - Real-time cloud server analytics and virtual machine monitoring dashboard.">
+  <title>CloudPulse | VM Monitoring & Analytics</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Background Glows -->
+  <div class="glow-bg glow-1"></div>
+  <div class="glow-bg glow-2"></div>
+
+  <header class="navbar">
+    <div class="container nav-container">
+      <div class="logo">
+        <span class="logo-pulse"></span>
+        <h1>CloudPulse</h1>
+      </div>
+      <nav class="nav-menu">
+        <a href="#features">Features</a>
+        <a href="#dashboard">Demo</a>
+        <a href="#deployment">Deployment</a>
+      </nav>
+      <div class="nav-actions">
+        <button id="theme-toggle" class="btn btn-secondary" aria-label="Toggle Theme">
+          <span class="toggle-icon">🌙</span>
+        </button>
+        <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="btn btn-primary">GitHub</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="container hero-container">
+        <div class="hero-content">
+          <div class="badge">V1.0 Live on VM</div>
+          <h2 class="hero-title">Monitor Your Virtual Machines in <span class="gradient-text">Real-Time</span></h2>
+          <p class="hero-subtitle">A simple, lightweight, and visually stunning server dashboard. Deployable to any virtual machine via automated CI/CD in seconds.</p>
+          <div class="hero-buttons">
+            <a href="#dashboard" class="btn btn-primary btn-large">View Live Demo</a>
+            <a href="#deployment" class="btn btn-outline btn-large">Setup CI/CD</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dashboard Preview (Interactive) -->
+    <section id="dashboard" class="dashboard-section">
+      <div class="container">
+        <div class="section-header">
+          <h3>Interactive VM Dashboard</h3>
+          <p>Simulating live VM metrics directly from your deployment</p>
+        </div>
+        
+        <div class="dashboard-mock">
+          <div class="mock-header">
+            <div class="mock-dots">
+              <span class="dot red"></span>
+              <span class="dot yellow"></span>
+              <span class="dot green"></span>
+            </div>
+            <div class="mock-address">vm-instance-01.local</div>
+            <div class="mock-status">
+              <span class="status-indicator live"></span>
+              <span id="connection-status">CONNECTED</span>
+            </div>
+          </div>
+          
+          <div class="mock-body">
+            <div class="stats-grid">
+              <!-- CPU Card -->
+              <div class="stat-card" id="cpu-card">
+                <div class="stat-header">
+                  <span>CPU Usage</span>
+                  <span class="stat-icon">💻</span>
+                </div>
+                <div class="stat-value"><span id="cpu-val">24</span>%</div>
+                <div class="progress-bar-container">
+                  <div class="progress-bar" id="cpu-bar" style="width: 24%"></div>
+                </div>
+              </div>
+              
+              <!-- RAM Card -->
+              <div class="stat-card" id="ram-card">
+                <div class="stat-header">
+                  <span>RAM Usage</span>
+                  <span class="stat-icon">💾</span>
+                </div>
+                <div class="stat-value"><span id="ram-val">4.2</span> / 8 GB</div>
+                <div class="progress-bar-container">
+                  <div class="progress-bar" id="ram-bar" style="width: 52%"></div>
+                </div>
+              </div>
+
+              <!-- Network Traffic Card -->
+              <div class="stat-card" id="network-card">
+                <div class="stat-header">
+                  <span>Bandwidth</span>
+                  <span class="stat-icon">🚀</span>
+                </div>
+                <div class="stat-value"><span id="net-val">12.4</span> MB/s</div>
+                <div class="stat-graph">
+                  <div class="sparkline" id="sparkline-container">
+                    <!-- Dynamic sparkline points -->
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Server Console Output -->
+            <div class="console-card">
+              <div class="console-header">System Log</div>
+              <div class="console-content" id="console-log">
+                <p class="console-line text-mute">[2026-06-18 13:48:46] Initializing CloudPulse agent...</p>
+                <p class="console-line text-success">[2026-06-18 13:48:47] Web server running on port 80 (Nginx/1.18.0)</p>
+                <p class="console-line text-success">[2026-06-18 13:48:47] CI/CD deployment verified successfully.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features-section">
+      <div class="container">
+        <div class="section-header">
+          <h3>Why CloudPulse?</h3>
+          <p>Streamlined deployment, premium design, ultra-lightweight footprint.</p>
+        </div>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <h4>Instant Deploy</h4>
+            <p>Ready to go with Nginx, Docker, or bare metal. Minimal dependencies required.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🔄</div>
+            <h4>Auto CI/CD</h4>
+            <p>Fully configured for GitHub Actions. Git push, and watch your server update in 10 seconds.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🎨</div>
+            <h4>Aesthetic UI</h4>
+            <p>Designed with glassmorphism, glowing gradients, and CSS variables for quick customization.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CI/CD Setup Guide -->
+    <section id="deployment" class="deployment-section">
+      <div class="container">
+        <div class="card deployment-card">
+          <div class="deployment-header">
+            <h3>Deploy This Site to Your VM</h3>
+            <p>Quick guide to setting up automated deployment with GitHub Actions.</p>
+          </div>
+          <div class="code-container">
+            <div class="code-header">
+              <span>GitHub Repository Secrets</span>
+              <button id="copy-btn" class="btn btn-small">Copy Key Names</button>
+            </div>
+            <pre><code>VM_HOST      # Your VM Public IP Address
+VM_USER      # SSH User (e.g. ubuntu, root)
+VM_SSH_KEY   # Private SSH Key (begins with -----BEGIN OPENSSH PRIVATE KEY-----)</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-container">
+      <p>&copy; <span id="year">2026</span> CloudPulse. Built with Vanilla HTML, CSS, and JS.</p>
+      <div class="footer-links">
+        <a href="#">Terms</a>
+        <a href="#">Privacy</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
