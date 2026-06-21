@@ -1,25 +1,20 @@
 pipeline {
     agent any
-    environment {
-        IMAGE_NAME = "mysite"
-        CONTAINER_NAME = "mysite-container"
-    }
     stages {
-        stage('Checkout') {
-            steps { checkout scm }
-        }
-        stage('Build Docker Image') {
+        stage('Deploy to VM') {
             steps {
-                sh 'docker build -t $IMAGE_NAME:$BUILD_NUMBER .'
-            }
-        }
-        stage('Deploy') {
-            steps {
-                sh '''
-                    docker stop $CONTAINER_NAME || true
-                    docker rm $CONTAINER_NAME || true
-                    docker run -d --name $CONTAINER_NAME -p 80:80 $IMAGE_NAME:$BUILD_NUMBER
-                '''
+                sshagent(['vm-ssh']) {
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no linux@192.168.100.254 "
+                            cd ~/app &&
+                            git pull origin main &&
+                            docker build -t mysite:${BUILD_NUMBER} . &&
+                            docker stop mysite-container || true &&
+                            docker rm mysite-container || true &&
+                            docker run -d --name mysite-container -p 80:80 mysite:${BUILD_NUMBER}
+                        "
+                    '''
+                }
             }
         }
     }
