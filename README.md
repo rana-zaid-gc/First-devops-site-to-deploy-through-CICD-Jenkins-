@@ -87,3 +87,33 @@ Successful Jenkins build (green):
 
 <img width="1918" height="823" alt="image" src="https://github.com/user-attachments/assets/1b4451ee-e675-4559-98f1-b31d9031f2d3" />
 
+
+Live website:
+
+
+<img width="1919" height="941" alt="image" src="https://github.com/user-attachments/assets/8ec9fb9c-41c1-4d63-a3da-b3eb9162b082" />
+
+
+What I'd Improve for Production
+
+This is a local learning project. To make it production-ready I would:
+
+
+Deploy to a cloud server (AWS EC2 / DigitalOcean) instead of a local VM
+Replace Poll SCM with a GitHub webhook for instant deploys
+Assign a static IP so the pipeline never breaks on reboot
+Add a build/test stage before deployment
+Use Docker Compose (and eventually Kubernetes) for orchestration
+Add monitoring and logging
+
+
+What I Learned
+
+
+How a CI/CD pipeline connects source control, build automation, and deployment
+Containerizing and serving a web app with Docker + Nginx
+Configuring secure, passwordless SSH between machines
+Writing Pipeline-as-Code with a Jenkinsfile
+Systematically debugging infrastructure issues (networking, ports, keys, services)
+
+
