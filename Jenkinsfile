@@ -5,7 +5,7 @@ pipeline {
             steps {
                 sshagent(['vm-ssh']) {
                     sh '''
-                        ssh -o StrictHostKeyChecking=no linux@192.168.100.254 "
+                        ssh -o StrictHostKeyChecking=no linux@192.168.18.35 "
                             cd ~/app &&
                             git pull origin main &&
                             docker build -t mysite:${BUILD_NUMBER} . &&
