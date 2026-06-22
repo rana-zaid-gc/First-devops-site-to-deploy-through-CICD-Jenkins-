@@ -157,6 +157,10 @@ GitHub (push) → https://<id>.ngrok-free.dev/github-webhook/ → [ngrok tunnel]
 
 I verified delivery via GitHub's **Recent Deliveries** panel (looking for a `200` response).
 
+
+<img width="1475" height="912" alt="image" src="https://github.com/user-attachments/assets/dc57d60f-5b30-4d25-8ee9-153317342a09" />
+
+
 ### Which to use when
 
 | Situation | Recommended trigger |
