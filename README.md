@@ -117,3 +117,53 @@ Writing Pipeline-as-Code with a Jenkinsfile
 Systematically debugging infrastructure issues (networking, ports, keys, services)
 
 
+"What I'd Improve"
+
+## CI/CD Triggers: Webhooks & Polling
+
+This pipeline supports two ways of automatically triggering a deployment when code is pushed to GitHub. Understanding both — and when to use each — was part of building this project.
+
+### Option 1: Poll SCM (interval-based)
+
+Jenkins periodically *asks* GitHub whether there are new commits.
+
+- **Schedule used:** `H/2 * * * *` (checks every ~2 minutes)
+- **How it works:** Jenkins runs a check on a timer; if it finds a new commit, it triggers a build.
+- **Pros:** Works entirely on a local/private network — no public access needed.
+- **Cons:** Up to a 2-minute delay; Jenkins checks repeatedly even when nothing changed.
+
+### Option 2: Webhooks (event-based) — instant deploys
+
+GitHub *notifies* Jenkins the instant a push happens, by sending an HTTP POST to a webhook URL.
+
+- **How it works:** On every push, GitHub sends a payload to Jenkins' `/github-webhook/` endpoint, which immediately triggers a build.
+- **Pros:** Near-instant deployment (seconds, not minutes); no wasted polling.
+- **Cons:** Jenkins must be reachable from the public internet.
+
+### The local-setup challenge (and how I solved it)
+
+Since Jenkins runs locally (not on a public server), GitHub couldn't reach it directly at `localhost:8080`. To bridge this, I used **ngrok** to create a secure public tunnel to the local Jenkins instance:
+
+```
+GitHub (push) → https://<id>.ngrok-free.dev/github-webhook/ → [ngrok tunnel] → localhost:8080 (Jenkins) → build
+```
+
+**Setup steps:**
+1. Exposed local Jenkins with `ngrok http 8080`
+2. Added a GitHub webhook → Payload URL: `https://<ngrok-url>/github-webhook/`, content type `application/json`, push events
+3. Installed the **GitHub Integration** plugin in Jenkins (provides the `/github-webhook/` endpoint)
+4. Enabled **"GitHub hook trigger for GITScm polling"** in the job's triggers
+5. Set the job's Pipeline definition to **"Pipeline script from SCM"** so Jenkins tracks the repo (required for the webhook trigger to act on changes)
+
+I verified delivery via GitHub's **Recent Deliveries** panel (looking for a `200` response).
+
+### Which to use when
+
+| Situation | Recommended trigger |
+|-----------|--------------------|
+| Local / private Jenkins, learning | Poll SCM |
+| Public/cloud Jenkins, real workflow | Webhook |
+| Need instant deploys | Webhook |
+| No public access available | Poll SCM |
+
+> **Note:** ngrok is a local-development workaround. On a cloud-hosted Jenkins with a public IP, webhooks work directly with no tunnel — which is the proper production approach. 
