@@ -171,3 +171,97 @@ I verified delivery via GitHub's **Recent Deliveries** panel (looking for a `200
 | No public access available | Poll SCM |
 
 > **Note:** ngrok is a local-development workaround. On a cloud-hosted Jenkins with a public IP, webhooks work directly with no tunnel — which is the proper production approach. 
+
+
+# SonarQube Code Quality Integration
+
+This pipeline includes a **SonarQube code analysis stage** that automatically scans the codebase for bugs, vulnerabilities, code smells, and security issues on every build — before the code is deployed.
+
+## What was added
+
+A `SonarQube Analysis` stage runs **before** the deploy stage. If the code is analysed successfully, the pipeline continues to deployment; the analysis report is published to a SonarQube dashboard for review.
+
+```
+git push → Jenkins → SonarQube scans code → Deploy to VM (Nginx)
+```
+
+## Architecture
+
+```
+┌──────────┐   ┌──────────────────┐   ┌─────────────────────┐
+│  GitHub  │──▶│  Jenkins (host)  │──▶│  SonarQube (Docker)  │
+│  (code)  │   │                  │   │  code quality report │
+└──────────┘   │                  │   └─────────────────────┘
+               │                  │   ┌─────────────────────┐
+               │                  │──▶│  VM (Nginx) over SSH │
+               └──────────────────┘   │  deploys the site    │
+                                       └─────────────────────┘
+```
+
+## How it works
+
+1. **SonarQube server** runs locally in Docker:
+   ```bash
+   docker run -d --name sonarqube -p 9000:9000 sonarqube:lts-community
+   ```
+   Dashboard available at `http://localhost:9000`.
+
+2. **Jenkins is connected to SonarQube** via:
+   - The **SonarQube Scanner** plugin
+   - A server configuration (`MySonar`) pointing at `http://localhost:9000`
+   - An authentication **token** stored as a Jenkins credential
+
+3. **The pipeline stage** runs the scanner and sends results to the server:
+   ```groovy
+   stage('SonarQube Analysis') {
+       steps {
+           script {
+               def scannerHome = tool 'SonarScanner'
+               withSonarQubeEnv('MySonar') {
+                   sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=devops-site -Dsonar.sources=."
+               }
+           }
+       }
+   }
+   ```
+
+## Viewing the report
+
+After a build, the analysis report is available at:
+
+```
+http://localhost:9000/dashboard?id=devops-site
+```
+
+It shows bugs, vulnerabilities, security hotspots, code smells, and duplications.
+
+## Setup summary
+
+| Step | Action |
+|------|--------|
+| 1 | Run the SonarQube server in Docker (`-p 9000:9000`) |
+| 2 | Install the **SonarQube Scanner** plugin in Jenkins |
+| 3 | Generate a **token** in SonarQube (My Account → Security) |
+| 4 | Add the SonarQube **server** (`MySonar`) + token in Manage Jenkins → System |
+| 5 | Add the **scanner tool** (`SonarScanner`) in Manage Jenkins → Tools |
+| 6 | Add the `SonarQube Analysis` stage to the `Jenkinsfile` |
+
+## Challenges I solved
+
+- **Authentication failure ("Not authorized")** — the SonarQube token credential existed but wasn't selected in the server configuration; fixing the dropdown linked the token so the scanner could authenticate.
+- **SSH deploy formatting** — the multi-line remote command was misread by SSH ("hostname contains invalid characters"); rewriting the deploy command as a single line fixed the quoting.
+- **VM networking** — switching the VM from NAT to a bridged adapter gave it a reachable IP so Jenkins could deploy to it over SSH.
+
+## What I learned
+
+- Integrating a code-quality gate into a CI/CD pipeline (a core DevSecOps practice)
+- Connecting Jenkins to an external analysis server with token authentication
+- Running SonarQube as a containerised service
+- How a real pipeline checks code quality *before* deploying
+
+---
+
+<img width="1600" height="820" alt="image" src="https://github.com/user-attachments/assets/fd702f97-e14d-42ad-b179-f358b2a396f7" />
+
+
+
