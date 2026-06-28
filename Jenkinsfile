@@ -1,15 +1,24 @@
 pipeline {
     agent any
     stages {
-        stage('Deploy to VM') {
+        stage('SonarQube Analysis') {
+            steps {
+                script {
+                    def scannerHome = tool 'SonarScanner'
+                    withSonarQubeEnv('MySonar') {
+                        sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=devops-site -Dsonar.sources=."
+                    }
+                }
+            }
+        }
+        stage('Deploy') {
             steps {
                 sshagent(['vm-ssh']) {
                     sh '''
-                        ssh -p 2222 -o StrictHostKeyChecking=no testing@localhost "
+                        ssh -o StrictHostKeyChecking=no username@VM-IP "
                             cd ~/app &&
                             git pull origin main &&
-                            cp -r ~/app/*.html ~/app/*.css ~/app/*.js /var/www/html/ &&
-                            echo 'Deployed successfully'
+                            cp *.html *.css *.js /var/www/html/
                         "
                     '''
                 }
