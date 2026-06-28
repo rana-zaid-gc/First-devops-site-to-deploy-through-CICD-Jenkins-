@@ -15,7 +15,7 @@ pipeline {
             steps {
                 sshagent(['vm-ssh']) {
                     sh '''
-                        ssh -o StrictHostKeyChecking=no username@VM-IP "
+                        ssh -o StrictHostKeyChecking=no testing@10.0.2.15"
                             cd ~/app &&
                             git pull origin main &&
                             cp *.html *.css *.js /var/www/html/
